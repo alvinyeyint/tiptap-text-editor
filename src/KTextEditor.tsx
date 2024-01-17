@@ -3,7 +3,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { Button } from "@/components/ui/button";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -41,9 +41,9 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
     editor.chain().focus().toggleStrike().run();
   }, [editor]);
 
-  const toggleCode = useCallback(() => {
-    editor.chain().focus().toggleCode().run();
-  }, [editor]);
+  // const toggleCode = useCallback(() => {
+  //   editor.chain().focus().toggleCode().run();
+  // }, [editor]);
 
   const toggleOrderList = useCallback(() => {
     editor.chain().focus().toggleOrderedList().run();
@@ -87,7 +87,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
     closeModal();
   }, [closeModal, editor, removeLink, url]);
 
-  const handleKeyDown = (e: any) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       saveLink();
     }
@@ -116,7 +116,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         className="p-2 flex gap-2 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
         tippyOptions={{ duration: 150 }}
         editor={editor}
-        shouldShow={({ editor, view, state, oldState, from, to }) => {
+        shouldShow={({ editor, from, to }) => {
           // only show the bubble menu for links.
           if (from === to && editor.isActive("link")) {
             setUrl(editor.getAttributes("link").href ?? "");
