@@ -1,6 +1,5 @@
 import KTextEditor from "./KTextEditor";
 import { useState } from "react";
-import { formatHtml } from "./helper";
 import "../app/globals.css";
 
 function App() {
@@ -8,13 +7,12 @@ function App() {
     "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci consequatur illo autem asperiores, non a libero nam voluptates. Pariatur, quibusdam illum. Quasi saepe culpa architecto iusto eum omnis magni qui! "
   );
 
-  console.log(formatHtml(content));
   return (
     <>
       <div className="w-1/2">
-        <h3 className="text-base font-semibold leading-7 text-gray-900 mb-3">
+        <h2 className="text-xl text-blue-600 font-semibold leading-7 mb-3">
           Tiptap editor
-        </h3>
+        </h2>
         <KTextEditor value={content} onChange={(value) => setContent(value)} />
       </div>
 
@@ -23,7 +21,7 @@ function App() {
           <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
             HTML Output :
           </p>
-          <p className="k-card">{formatHtml(content)}</p>
+          <p className="k-card">{content}</p>
         </div>
 
         <div className="my-3">

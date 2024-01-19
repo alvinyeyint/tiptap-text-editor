@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   IconBold,
+  IconH1,
   IconItalic,
   IconLink,
   IconList,
@@ -20,6 +21,8 @@ import {
   IconStrikethrough,
   IconUnderline,
 } from "@tabler/icons-react";
+import Paragraph from "@tiptap/extension-paragraph";
+import Heading from "@tiptap/extension-heading";
 
 const MenuBar = ({ editor }: { editor: Editor }) => {
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -45,7 +48,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
   //   editor.chain().focus().toggleCode().run();
   // }, [editor]);
 
-  const toggleOrderList = useCallback(() => {
+  const toggleOrderedList = useCallback(() => {
     editor.chain().focus().toggleOrderedList().run();
   }, [editor]);
 
@@ -54,7 +57,6 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
   }, [editor]);
 
   const openModal = useCallback(() => {
-    console.log(editor.chain().focus());
     setUrl(editor.getAttributes("link").href ?? "");
     setIsOpen(true);
   }, [editor]);
@@ -74,7 +76,6 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       removeLink();
       return;
     } else if (url) {
-      console.log("save link");
       editor
         .chain()
         .focus()
@@ -92,6 +93,13 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       saveLink();
     }
   };
+
+  const toggleHeading = useCallback(
+    (level: 1 | 2 | 3) => {
+      editor.chain().focus().toggleHeading({ level }).run();
+    },
+    [editor]
+  );
 
   if (!editor) {
     return null;
@@ -138,7 +146,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={toggleBold}
           disabled={!editor.can().chain().focus().toggleBold().run()}
           size="icon"
-          className="w-8"
+          className={editor.isActive("bold") ? "bg-slate-200" : ""}
         >
           <IconBold className="h-4 w-4" />
         </Button>
@@ -147,7 +155,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={toggleItalic}
           disabled={!editor.can().chain().focus().toggleItalic().run()}
           size="icon"
-          className="w-8"
+          className={editor.isActive("italic") ? "bg-slate-200" : ""}
         >
           <IconItalic className="h-4 w-4" />
         </Button>
@@ -156,7 +164,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={toggleStrike}
           disabled={!editor.can().chain().focus().toggleStrike().run()}
           size="icon"
-          className="w-8"
+          className={editor.isActive("strike") ? "bg-slate-200" : ""}
         >
           <IconStrikethrough className="h-4 w-4" />
         </Button>
@@ -165,7 +173,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={toggleUnderline}
           disabled={!editor.can().chain().focus().toggleUnderline().run()}
           size="icon"
-          className="w-8"
+          className={editor.isActive("underline") ? "bg-slate-200" : ""}
         >
           <IconUnderline className="h-4 w-4" />
         </Button>
@@ -174,7 +182,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           onClick={openModal}
           disabled={!editor.can().chain().focus()}
           size="icon"
-          className="w-8"
+          className={editor.isActive("link") ? "bg-slate-200" : ""}
         >
           <IconLink className="h-4 w-4" />
         </Button>
@@ -182,17 +190,25 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           variant="ghost"
           onClick={toggleBulletList}
           size="icon"
-          className="w-8"
+          className={editor.isActive("bulletList") ? "bg-slate-200" : ""}
         >
           <IconList className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
-          onClick={toggleOrderList}
+          onClick={toggleOrderedList}
           size="icon"
-          className="w-8"
+          className={editor.isActive("orderedList") ? "bg-slate-200" : ""}
         >
           <IconListNumbers className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => toggleHeading(1)}
+          size="icon"
+          className={editor.isActive("heading") ? "bg-slate-200" : ""}
+        >
+          <IconH1 className="h-4 w-4" />
         </Button>
       </div>
     </>
@@ -220,6 +236,21 @@ const KTextEditor = (props: EditorProps) => {
             class: "k-bullet-lists",
           },
         },
+        hardBreak: {
+          HTMLAttributes: {
+            class: "my-1",
+          },
+        },
+      }),
+      Heading.configure({
+        HTMLAttributes: {
+          class: "text-2xl",
+        },
+      }),
+      Paragraph.configure({
+        HTMLAttributes: {
+          class: "min-h-4",
+        },
       }),
       Underline,
       Link.configure({
@@ -234,7 +265,7 @@ const KTextEditor = (props: EditorProps) => {
     editorProps: {
       attributes: {
         class:
-          "prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl p-1 focus:outline-none min-h-16 mt-2",
+          "prose dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-2xl p-1 focus:outline-none min-h-16",
       },
     },
     content: value,
